@@ -11,9 +11,12 @@ Original file is located at
 **NOTE: Significant code is used from Prof. Bilionis's course - ME597: Data Analytics for Scientists and Engineers**
 """
 
-## Import Libraries
+# Import Libraries
 import numpy
 import random
+import torch
+import gc
+import wandb
 import pandas as pd
 import matplotlib.pyplot as plt
 import torch.nn as nn
@@ -34,8 +37,6 @@ from TrainedModel import TrainedModel
 # from sklearn.model_selection import train_test_split
 # import scipy.stats as st
 
-wandb.login()
-
 # Set Seeds
 torch.manual_seed(175643)
 random.seed(175643)
@@ -47,7 +48,7 @@ reg_weight = 1e-3
 n_batch = 256
 batchLarge = n_batch * 100
 
-# Define the layers of the neural network. 
+# Define the layers of the neural network.
 config = {
     'dataset': 'practice',  # create a nickname for full dataset here
     'epochs': epochs,
@@ -67,75 +68,82 @@ X_val_Nscale, y_val_Nscale = data_loader('../PythonProject/PracticeMonth.csv')
 loss_function = nn.MSELoss()
 
 # Experiment tracking with weights and biases
+wandb.login()
 experiment_name = wandb.util.generate_id()
-with wandb.init(project='OTEC', config=config):
-    config = wandb.config  # build the network
-    net = build_network(config.layers, config.neurons, config.activation)
+wandb.init(project='OTEC', config=config)
 
-    # put network on the GPU
-    if torch.cuda.is_available():
-        device = torch.device("cuda:0")
-        net.cuda()
-    else:
-        device = torch.device('cpu')
+config = wandb.config
+# build the network
+net = build_network(config.layers, config.neurons, config.activation)
 
-    # build optimizer
-    optimizer = build_optimizer(net, config.optimizer, config.learning_rate)
+# put network on the GPU
+if torch.cuda.is_available():
+    device = torch.device("cuda:0")
+    net.cuda()
+else:
+    device = torch.device('cpu')
 
-    val_loss = []
-    batch_loss = []
+# build optimizer
+optimizer = build_optimizer(net, config.optimizer, config.learning_rate)
 
-    X_val = pd.read_csv('PracticeData20YearsRandXVal.csv')
-    Y_val = pd.read_csv('PracticeData20YearsRandYVal.csv')
-    X_validation = X_val.to_numpy()
-    Y_validation = Y_val.to_numpy()
-    y_val_scaled = torch.Tensor(Y_validation)
-    new_shape = (len(Y_validation), 1)
-    y_val_scaled = y_val_scaled.view(new_shape)
-    X_val_scaled = torch.Tensor(X_validation)
-    new_shape_x = (len(X_validation), 4)
-    X_val_scaled = X_val_scaled.view(new_shape_x)
-    del X_val
-    del Y_val
-    del X_validation
-    del Y_validation
-    gc.collect()
+val_loss = []
+batch_loss = []
 
-    for e in tqdm(range(config.epochs)):
-        for batch in pd.read_csv('PracticeData20YearsRandTrain.csv', chunksize=batchLarge):
-            data = batch.to_numpy()
-            X = data[:, :4]
-            Y = data[:, -1]
-            X_train_scaled = torch.Tensor(X)
-            new_shape_x_train = (len(X), 4)
-            X_train_scaled = X_train_scaled.view(new_shape_x_train)
-            y_train_scaled = torch.Tensor(Y)
-            new_shape_y_train = (len(Y), 1)
-            y_train_scaled = y_train_scaled.view(new_shape_y_train)
-            train_dataset = torch.utils.data.TensorDataset(X_train_scaled, y_train_scaled)
-            train_data_loader = torch.utils.data.DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True)
-            del X
-            del Y
-            del data
-            del batch
-            gc.collect()
-            batch_loss, val_loss = train_net(train_data_loader)
-        # Evaluate the test loss and append it on the list `test_loss`
-        y_pred_val = net(X_val_scaled.to(device))
-        v_loss = loss_function(y_val_scaled.to(device), y_pred_val.to(device))
-        val_loss.append(v_loss.item())
-        wandb.log({"validation loss": v_loss.item()})
+X_val = pd.read_csv('PracticeData20YearsRandXVal.csv')
+Y_val = pd.read_csv('PracticeData20YearsRandYVal.csv')
+X_validation = X_val.to_numpy()
+Y_validation = Y_val.to_numpy()
+y_val_scaled = torch.Tensor(Y_validation)
+new_shape = (len(Y_validation), 1)
+y_val_scaled = y_val_scaled.view(new_shape)
+X_val_scaled = torch.Tensor(X_validation)
+new_shape_x = (len(X_validation), 4)
+X_val_scaled = X_val_scaled.view(new_shape_x)
+del X_val
+del Y_val
+del X_validation
+del Y_validation
+gc.collect()
 
-    feature_scaler = load(open('featureScaler.pkl', 'rb'))
-    target_scaler = load(open('targetScaler.pkl', 'rb'))
+for e in tqdm(range(config.epochs)):
+    for batch in pd.read_csv('PracticeData20YearsRandTrain.csv', chunksize=batchLarge):
+        data = batch.to_numpy()
+        X = data[:, :4]
+        Y = data[:, -1]
+        X_train_scaled = torch.Tensor(X)
+        new_shape_x_train = (len(X), 4)
+        X_train_scaled = X_train_scaled.view(new_shape_x_train)
+        y_train_scaled = torch.Tensor(Y)
+        new_shape_y_train = (len(Y), 1)
+        y_train_scaled = y_train_scaled.view(new_shape_y_train)
+        train_dataset = torch.utils.data.TensorDataset(
+            X_train_scaled, y_train_scaled)
+        train_data_loader = torch.utils.data.DataLoader(
+            train_dataset, batch_size=config.batch_size, shuffle=True)
+        del X
+        del Y
+        del data
+        del batch
+        gc.collect()
+        batch_loss, val_loss = train_net(
+            net, device, optimizer, loss_function, batch_loss, val_loss, train_data_loader)
+    # Evaluate the test loss and append it on the list `test_loss`
+    y_pred_val = net(X_val_scaled.to(device))
+    v_loss = loss_function(y_val_scaled.to(device), y_pred_val.to(device))
+    val_loss.append(v_loss.item())
+    wandb.log({"validation loss": v_loss.item()})
 
-    trained_model = TrainedModel(net, standarized=True, feature_scaler=feature_scaler, target_scaler=target_scaler)
+feature_scaler = load(open('featureScaler.pkl', 'rb'))
+target_scaler = load(open('targetScaler.pkl', 'rb'))
+
+trained_model = TrainedModel(
+    net, standarized=True, feature_scaler=feature_scaler, target_scaler=target_scaler)
 
 wandb.finish()
 
-#Validation
+# Validation
 epoch_list = range(epochs)
-fig, ax = plt.subplots(dpi = 150)
+fig, ax = plt.subplots(dpi=150)
 ax.plot(epoch_list, val_loss)
 ax.set_xlabel('Epochs')
 ax.set_ylabel('Val Loss')
@@ -143,9 +151,9 @@ ax.set_title('Validation Performance')
 plt.savefig('Val_loss.png')
 
 y_pred = trained_model(X_val_Nscale)
-fig, ax = plt.subplots(dpi = 100)
-ax.plot(y_pred, y_val_Nscale,'bo')
-ax.plot(y_val_Nscale,y_val_Nscale,'r-')
+fig, ax = plt.subplots(dpi=100)
+ax.plot(y_pred, y_val_Nscale, 'bo')
+ax.plot(y_val_Nscale, y_val_Nscale, 'r-')
 ax.set_xlabel('Predicted Temperature')
 ax.set_ylabel('Measured Temperature')
 ax.set_title('Model verification on training data set')
