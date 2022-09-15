@@ -85,13 +85,13 @@ def data_loader(datafile):
     del X
     del y
     gc.collect()
-    numpy.savetxt('PracticeData20YearsRandTrain.csv', numpy.concatenate((X_train_scaled, y_train_scaled), axis=1),
+    numpy.savetxt('PracticeData1YearsRandTrain.csv', numpy.concatenate((X_train_scaled, y_train_scaled), axis=1),
                   delimiter=',')
     del X_train_scaled
     del y_train_scaled
     gc.collect()
-    numpy.savetxt('PracticeData20YearsRandXVal.csv', X_val_scaled, delimiter=',')
-    numpy.savetxt('PracticeData20YearsRandYVal.csv', y_val_scaled, delimiter=',')
+    numpy.savetxt('PracticeData1YearsRandXVal.csv', X_val_scaled, delimiter=',')
+    numpy.savetxt('PracticeData1YearsRandYVal.csv', y_val_scaled, delimiter=',')
     del y_val_scaled
     del X_val_scaled
     gc.collect()
@@ -254,7 +254,7 @@ config = {
 }
 
 # Process and load data
-X_val_Nscale, y_val_Nscale = data_loader('../PythonProject/PracticeMonth.csv')
+X_val_Nscale, y_val_Nscale = data_loader('practiceMonth.csv')
 
 # initialize loss function
 loss_function = nn.MSELoss()
@@ -278,8 +278,8 @@ with wandb.init(project='OTEC', config=config):
     val_loss = []
     batch_loss = []
 
-    X_val = pd.read_csv('PracticeData20YearsRandXVal.csv')
-    Y_val = pd.read_csv('PracticeData20YearsRandYVal.csv')
+    X_val = pd.read_csv('PracticeData1YearsRandXVal.csv')
+    Y_val = pd.read_csv('PracticeData1YearsRandYVal.csv')
     X_validation = X_val.to_numpy()
     Y_validation = Y_val.to_numpy()
     y_val_scaled = torch.Tensor(Y_validation)
@@ -295,7 +295,7 @@ with wandb.init(project='OTEC', config=config):
     gc.collect()
 
     for e in tqdm(range(config.epochs)):
-        for batch in pd.read_csv('PracticeData20YearsRandTrain.csv', chunksize=batchLarge):
+        for batch in pd.read_csv('PracticeData1YearsRandTrain.csv', chunksize=batchLarge):
             data = batch.to_numpy()
             X = data[:, :4]
             Y = data[:, -1]
