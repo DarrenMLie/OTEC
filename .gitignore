@@ -1,1 +1,11 @@
 practiceMonth.csv
+practiceData.csv
+PracticeData1YearsRandTrain.csv
+PracticeData1YearsRandXVal.csv
+PracticeData1YearsRandYVal.csv
+Data.csv
+/wandb
+.ipynb_checkpoints
+savemodel.pth
+targetScaler.pkl
+featureScaler.pkl
