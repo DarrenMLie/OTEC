@@ -9,3 +9,4 @@ Data.csv
 savemodel.pth
 targetScaler.pkl
 featureScaler.pkl
+/Results
