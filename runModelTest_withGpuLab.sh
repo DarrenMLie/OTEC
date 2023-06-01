@@ -35,5 +35,5 @@ module use /depot/dwarsing/etc/modules
 module load conda-env/python3.8-torch-py3.8.5
 conda activate python3.8-torch
 
-python oceantemp_training2_5_9_22.py
+python test.py
 
