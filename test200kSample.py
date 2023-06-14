@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # Data Information
-train_dataset = "Max's Materials/Research/practiceData3Years.nc"
+train_dataset = "practiceData3Years.nc"
 response_var = 'Temperature'
 sensor_var = 'Probe'
 
@@ -76,7 +76,7 @@ class Net(nn.Module):
         x = self.fc6(x)
         return x
 
-PATH = "Max's Materials\Research\OTEC_miniBatchState.pth"
+PATH = "OTEC_miniBatchState.pth"
 net = Net()
 net.load_state_dict(torch.load(PATH))
 net.eval()
