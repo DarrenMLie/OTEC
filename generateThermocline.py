@@ -57,6 +57,11 @@ def generateThermocline(lat, long, date, depthLimit, depthIncr, net, folder, sav
     model_output_remean = model_output_unstandardized + temp_train_mu
     model_output_restored = np.exp(model_output_remean.cpu())
 
+    # Pack temperature results into depth-temp dataframe
+    depthArr = data["Depth"]
+    tempArr = [item[0] for item in model_output_restored.tolist()]
+    tempDf = pd.DataFrame(list(zip(depthArr, tempArr)), columns =["Depth", "Temperature"])
+
     if savePlots:
         year,month,day=jd_to_date(date)
 
@@ -68,7 +73,7 @@ def generateThermocline(lat, long, date, depthLimit, depthIncr, net, folder, sav
         ax.invert_yaxis()
         plt.savefig(f'{folder}/Thermocline_{lat:,.1f}_{long:,.1f}_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
         plt.close('all')
-    return model_output_restored
+    return tempDf
 
 if __name__ == "__main__":
     from pipeline import Net
@@ -77,3 +82,6 @@ if __name__ == "__main__":
     net.load_state_dict(torch.load(modelPath))
     net.eval()
     generateThermocline(0,0,2455562.5,1000,1,net,"Results/ThermoclinePlots")
+    # generateThermocline(0,0,2455562.5+182,1000,1,net,"Results/ThermoclinePlots")
+    # generateThermocline(0,0,2455562.5,1000,1,net,"Results/ThermoclinePlots")
+    # generateThermocline(0,0,2455562.5+182,1000,1,net,"Results/ThermoclinePlots")
