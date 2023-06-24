@@ -1,0 +1,11 @@
+numpy
+pandas
+torch
+torchvision
+torchaudio
+geopandas
+matplotlib
+global-land-mask
+xarray
+CoolProp
+scipy

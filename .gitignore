@@ -5,3 +5,4 @@ Extras
 *.jpeg
 *.png
 *.gif
+__pycache__
