@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
 
-# START HERE ** WHY ISNT IT PLOTTING ON WORLD MAP
+# START HERE ** WHY ISNT IT PLOTTING ON WORLD MAP (NEED WIFI)
 def generateExergyMap(exergyDf):
-    exergyDf.plot(x="Longitude", y="Latitude", kind="scatter", c="blue", colormap="YlOrRd")
+    # exergyDf.plot(x="Longitude", y="Latitude", kind="scatter", c="blue", colormap="YlOrRd")
+    exergyDf.plot(x="Longitude", y="Latitude")
 
 def generateSurfaceTempMap(surfaceTempDf):
     pass
