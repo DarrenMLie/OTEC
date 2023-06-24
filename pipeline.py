@@ -21,7 +21,7 @@ import os
 import xarray
 import torch
 
-# TODO ** create world plots, validate exergy results with warsinger (order of 10^19), what is depth units?
+# TODO ** create world plots, validate exergy results with warsinger (order of 10^19), validate temp results, what is depth units?
 # NOTE: Everything is validated except for exergy calculations, depth units, and comparison with actual data
 # setup global variables
 minLat = -90        # minimum latitude (degrees)
