@@ -3,57 +3,117 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 from geodatasets import get_path
+from julianToNormal import jd_to_date
 # from cartopy import crs as ccrs
 
 # START HERE ** find best way to plot contour on world map, geopandas seems kind of sketch
-def generateExergyMap(exergyDf):
-    # exergyDf.plot(x="Longitude", y="Latitude", kind="scatter", c="blue", colormap="YlOrRd")
-    exergyDf.plot(x="Longitude", y="Latitude")
+def generateExergyMap(plotDf, exergyPath, date):
+    worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
 
-def generateSurfaceTempMap(surfaceTempDf):
-    pass
+    # Creating axes and plotting world map
+    fig, ax = plt.subplots(figsize=(12, 6))
+    worldmap.plot(color="lightgrey", ax=ax)
 
-def generateThermoDepthMap(thermoDepthDf):
-    pass
+    # Plotting our Impact Energy data with a color map
+    x = plotDf['Longitude']
+    y = plotDf['Latitude']
+    z = plotDf['Exergy']
+    plt.scatter(x, y, c=z, alpha=0.6)
+    plt.colorbar(label='Exergy (J)')
+    plt.title("Global Thermocline Exergy Map")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
 
-def generatePlots(plotDf):
-    generateExergyMap(plotDf[["Latitude", "Longitude", "Exergy"]])
-    generateSurfaceTempMap(plotDf[["Latitude", "Longitude", "Surface_Temp"]])
-    generateThermoDepthMap(plotDf[["Latitude", "Longitude", "Thermocline_Depth"]])
+    year,month,day = jd_to_date(date)
+    plt.savefig(f'{exergyPath}/Exergy_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
+    plt.close('all')
+
+def generateSurfaceTempMap(plotDf, surfaceTempPath, date):
+    worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+
+    # Creating axes and plotting world map
+    fig, ax = plt.subplots(figsize=(12, 6))
+    worldmap.plot(color="lightgrey", ax=ax)
+
+    # Plotting our Impact Energy data with a color map
+    x = plotDf['Longitude']
+    y = plotDf['Latitude']
+    z = plotDf['Surface_Temp']
+    plt.scatter(x, y, c=z, alpha=0.6)
+    plt.colorbar(label='Surface Temp (C)')
+    plt.title("Global Surface Temperature Map")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+
+    year,month,day = jd_to_date(date)
+    plt.savefig(f'{surfaceTempPath}/SurfaceTemp_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
+    plt.close('all')
+
+def generateThermoDepthMap(plotDf, thermoDepthPath, date):
+    worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+
+    # Creating axes and plotting world map
+    fig, ax = plt.subplots(figsize=(12, 6))
+    worldmap.plot(color="lightgrey", ax=ax)
+
+    # Plotting our Impact Energy data with a color map
+    x = plotDf['Longitude']
+    y = plotDf['Latitude']
+    z = plotDf['Thermocline_Depth']
+    plt.scatter(x, y, c=z, alpha=0.6)
+    plt.colorbar(label='Thermocline Depth (m)')
+    plt.title("Global Thermocline Depth Map")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+
+    year,month,day = jd_to_date(date)
+    plt.savefig(f'{thermoDepthPath}/ThermoDepth_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
+    plt.close('all')
+
+def generatePlots(plotDf, date, exergyPath, surfaceTempPath, thermoDepthPath):
+    generateExergyMap(plotDf, exergyPath, date)
+    generateSurfaceTempMap(plotDf, surfaceTempPath, date)
+    generateThermoDepthMap(plotDf, thermoDepthPath, date)
 
 def geopandasTest(plotDf):
-    # GEOPANDAS DOCS
-    path = get_path("naturalearth.land")
-    worldmap = gpd.read_file(path)
-    ax = worldmap.plot()
-    plt.show()
+    # # GEOPANDAS DOCS
+    # path = get_path("naturalearth.land")
+    # worldmap = gpd.read_file(path)
+    # ax = worldmap.plot()
+    # plt.show()
 
-    # # EASY WAY TO PLOT DOCS (currently not working)
-    # # From GeoPandas, our world map data
-    # worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+    # EASY WAY TO PLOT DOCS (works simply)
+    # From GeoPandas, our world map data
+    worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
 
-    # # Creating axes and plotting world map
-    # fig, ax = plt.subplots(figsize=(12, 6))
-    # worldmap.plot(color="lightgrey", ax=ax)
+    # Creating axes and plotting world map
+    fig, ax = plt.subplots(figsize=(12, 6))
+    worldmap.plot(color="lightgrey", ax=ax)
 
-    # # Plotting our Impact Energy data with a color map
-    # x = plotDf['Longitude']
-    # y = plotDf['Latitude']
-    # z = plotDf['Exergy']
-    # # plt.scatter(x, y, s=20*z, c=z, alpha=0.6, vmin=0, vmax=threshold, cmap='autumn')
-    # plt.scatter(x, y, s=20*z, c=z, alpha=0.6, cmap='autumn')
-    # plt.colorbar(label='Exergy (J)')
+    # Plotting our Impact Energy data with a color map
+    x = plotDf['Longitude']
+    y = plotDf['Latitude']
+    z = plotDf['Exergy']
+    # plt.scatter(x, y, s=20*z, c=z, alpha=0.6, vmin=0, vmax=threshold, cmap='autumn')
+    plt.scatter(x, y, c=z, alpha=0.6)
+    plt.colorbar(label='Exergy (J)')
 
-    # # Creating axis limits and title
+    # Creating axis limits and title
     # plt.xlim([-180, 180])
     # plt.ylim([-90, 90])
 
-    # plt.title("Exergy Map")
-    # plt.xlabel("Longitude")
-    # plt.ylabel("Latitude")
-    # plt.show()
+    plt.title("Exergy Map")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+    plt.show()
     
 if __name__ == "__main__":
     plotDf = pd.read_csv("Results/ResultsCSV/Results_1-1-11.csv")
-    # generatePlots(plotDf)
-    geopandasTest(plotDf)
+    resultsPath = "Results"
+    exergyPath = resultsPath + "/ExergyMaps"
+    surfaceTempPath = resultsPath + "/SurfaceTempMaps"
+    thermoDepthPath = resultsPath + "/ThermoclineMaps"
+    resultsCSVPath = resultsPath + "/ResultsCSV"
+    
+    generatePlots(plotDf, 2455562.5, exergyPath, surfaceTempPath, thermoDepthPath)
+    # geopandasTest(plotDf)

@@ -49,7 +49,7 @@ def calculateTotalExergy(tempDf, depthIncr, areaIncr, tempCutoff):
     return totalExergy, deadStateIndex
 
 if __name__ == "__main__":
-    from pipeline import Net
+    from Net import Net
     modelPath = "OTEC_miniBatchState.pth"
     net = Net()
     net.load_state_dict(torch.load(modelPath))

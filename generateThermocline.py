@@ -76,7 +76,7 @@ def generateThermocline(lat, long, date, depthLimit, depthIncr, net, folder, sav
     return tempDf
 
 if __name__ == "__main__":
-    from pipeline import Net
+    from Net import Net
     modelPath = "OTEC_miniBatchState.pth"
     net = Net()
     net.load_state_dict(torch.load(modelPath))

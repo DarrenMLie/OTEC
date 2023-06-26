@@ -1,4 +1,4 @@
-# OTEC Pipeline
+# OTEC Main File
 # Potential Inputs:​ Lat, Long,​ Depths​
 # Land Mask and Bathymetric Mask​
 # ML Model​
@@ -23,26 +23,23 @@ import torch
 
 # TODO ** create world plots, validate exergy results with warsinger (order of 10^19), validate temp results, what is depth units?
 # NOTE: Everything is validated except for exergy calculations, depth units, and comparison with actual data
+
 # setup global variables
-minLat = -90        # minimum latitude (degrees)
-maxLat = 90         # maximum latitude (degrees)
-minLong = -180      # minimum longitude (degrees)
-maxLong = 180       # maximum longitude (degrees)
-# minDep = 0
-# maxDep = 1000     # determined automatically
-startDate = 2455562.5   # start date (julian time)
-endDate = 2455927.5     # end date (julian time)
+latRange = [-90, 90]
+longRange = [-180, 180]
+dateRange = [2455562.5, 2455927.5]
+
 areaIncr = 20       # world area grid (degrees)
 depthIncr = 5       # depth increment (meter)
-dateIncr = 300        # date increment (days)
+dateIncr = 300      # date increment (days)
 tempCutoff = 2      # thermocline temperature cutoff (K or degC)
 
 saveThermoPlots = False
 saveExcelData = True
 
-latRange = np.arange(minLat, maxLat, areaIncr)
-longRange = np.arange(minLong, maxLong, areaIncr)
-dateRange = np.arange(startDate, endDate, dateIncr)
+latArray = np.arange(latRange[0], latRange[1], areaIncr)
+longArray = np.arange(longRange[0], longRange[1], areaIncr)
+dateArray = np.arange(dateRange[0], dateRange[1], dateIncr)
 
 def main():
     # import training dataset for depth checking
@@ -54,14 +51,18 @@ def main():
     # create results directories if it doesn't exist
     print("Creating directories....")
     resultsPath = "Results"
-    thermoclinePath = resultsPath + "/ThermoclinePlots"
-    exergyPath = resultsPath + "/ExergyPlots"
+    thermoPath = resultsPath + "/ThermoclinePlots"
+    exergyPath = resultsPath + "/ExergyMaps"
+    surfaceTempPath = resultsPath + "/SurfaceTempMaps"
+    thermoDepthPath = resultsPath + "/ThermoclineMaps"
     resultsCSVPath = resultsPath + "/ResultsCSV"
     if not os.path.exists(resultsPath):
         os.makedirs(resultsPath)
-        os.makedirs(thermoclinePath)
+        os.makedirs(thermoPath)
         os.makedirs(exergyPath)
         os.makedirs(resultsCSVPath)
+        os.makedirs(surfaceTempPath)
+        os.makedirs(thermoDepthPath)
         print("Directories Created Successfully")
 
     # import ML model
@@ -73,15 +74,15 @@ def main():
 
     # main for loop to generate thermocline and get exergy for each time
     print("Entering main loop....") 
-    for date in dateRange:
+    for date in dateArray:
         # generate new dataframe for storing plotting variables worldwide for each new date
         print(f"Initializing plots dataframe for {date:.1f}....")
         plotDf = pd.DataFrame(columns = ['Latitude', 'Longitude', 'Exergy', 'Surface_Temp', 'Thermocline_Depth'])
     
         # generate data for each location 
         print(f"Generating data for {date:.1f}....")
-        for lat in latRange:
-            for long in longRange:
+        for lat in latArray:
+            for long in longArray:
                 # land mask
                 if not globe.is_land(lat, long):
                     # get maximum depth of location from database
@@ -89,7 +90,7 @@ def main():
 
                     # generate thermocline for location using ML model
                     print(f"Generating thermoclines for {lat:.1f}_{long:.1f}_{date:.1f}....") 
-                    tempDf = generateThermocline(lat, long, date, maxDep, depthIncr, net, thermoclinePath, saveThermoPlots)
+                    tempDf = generateThermocline(lat, long, date, maxDep, depthIncr, net, thermoPath, saveThermoPlots)
                     
                     # calculate available exergy and thermocline depth for location
                     print(f"Calculating total exergy for {lat:.1f}_{long:.1f}_{date:.1f}....") 
@@ -108,9 +109,9 @@ def main():
             year,month,day = jd_to_date(date)
             plotDf.to_csv(f"{resultsCSVPath}/Results_{int(month)}-{int(day)}-{str(int(year))[2:]}.csv")
 
-        # generate plots (under construction) ** START HERE
-        # print(f"Generating world plots for {date:.1f}....")             
-        # generatePlots(plotDf)
+        # generate plots
+        print(f"Generating world plots for {date:.1f}....")             
+        generatePlots(plotDf, date, exergyPath, surfaceTempPath, thermoDepthPath)
 
         # border
         print(f"------------------------------------------------------------------------------------------")
