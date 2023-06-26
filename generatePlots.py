@@ -2,23 +2,24 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-from geodatasets import get_path
+import geodatasets
 from julianToNormal import jd_to_date
-# from cartopy import crs as ccrs
 
-# START HERE ** find best way to plot contour on world map, geopandas seems kind of sketch
+plotColor = "lightgrey"
+opacity = 0.6
+
 def generateExergyMap(plotDf, exergyPath, date):
-    worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+    worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
 
     # Creating axes and plotting world map
     fig, ax = plt.subplots(figsize=(12, 6))
-    worldmap.plot(color="lightgrey", ax=ax)
+    worldmap.plot(color=plotColor, ax=ax)
 
     # Plotting our Impact Energy data with a color map
     x = plotDf['Longitude']
     y = plotDf['Latitude']
     z = plotDf['Exergy']
-    plt.scatter(x, y, c=z, alpha=0.6)
+    plt.scatter(x, y, c=z, alpha=opacity)
     plt.colorbar(label='Exergy (J)')
     plt.title("Global Thermocline Exergy Map")
     plt.xlabel("Longitude")
@@ -29,17 +30,17 @@ def generateExergyMap(plotDf, exergyPath, date):
     plt.close('all')
 
 def generateSurfaceTempMap(plotDf, surfaceTempPath, date):
-    worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+    worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
 
     # Creating axes and plotting world map
     fig, ax = plt.subplots(figsize=(12, 6))
-    worldmap.plot(color="lightgrey", ax=ax)
+    worldmap.plot(color=plotColor, ax=ax)
 
     # Plotting our Impact Energy data with a color map
     x = plotDf['Longitude']
     y = plotDf['Latitude']
     z = plotDf['Surface_Temp']
-    plt.scatter(x, y, c=z, alpha=0.6)
+    plt.scatter(x, y, c=z, alpha=opacity)
     plt.colorbar(label='Surface Temp (C)')
     plt.title("Global Surface Temperature Map")
     plt.xlabel("Longitude")
@@ -50,17 +51,17 @@ def generateSurfaceTempMap(plotDf, surfaceTempPath, date):
     plt.close('all')
 
 def generateThermoDepthMap(plotDf, thermoDepthPath, date):
-    worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+    worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
 
     # Creating axes and plotting world map
     fig, ax = plt.subplots(figsize=(12, 6))
-    worldmap.plot(color="lightgrey", ax=ax)
+    worldmap.plot(color=plotColor, ax=ax)
 
     # Plotting our Impact Energy data with a color map
     x = plotDf['Longitude']
     y = plotDf['Latitude']
     z = plotDf['Thermocline_Depth']
-    plt.scatter(x, y, c=z, alpha=0.6)
+    plt.scatter(x, y, c=z, alpha=opacity)
     plt.colorbar(label='Thermocline Depth (m)')
     plt.title("Global Thermocline Depth Map")
     plt.xlabel("Longitude")
@@ -84,7 +85,9 @@ def geopandasTest(plotDf):
 
     # EASY WAY TO PLOT DOCS (works simply)
     # From GeoPandas, our world map data
-    worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+    # worldmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+    # From geodatasets
+    worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
 
     # Creating axes and plotting world map
     fig, ax = plt.subplots(figsize=(12, 6))
