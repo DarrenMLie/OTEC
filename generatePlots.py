@@ -5,8 +5,13 @@ import numpy as np
 import geodatasets
 from julianToNormal import jd_to_date
 
+# marker options
+# - s=0.1, linewidths=0 (too small)
+# - marker = "," (too big)
+# - marker = "." (best option right now)
+
 plotColor = "lightgrey"
-opacity = 0.6
+opacity = 0.5
 
 def generateExergyMap(plotDf, exergyPath, date):
     worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
@@ -19,7 +24,7 @@ def generateExergyMap(plotDf, exergyPath, date):
     x = plotDf['Longitude']
     y = plotDf['Latitude']
     z = plotDf['Exergy']
-    plt.scatter(x, y, c=z, alpha=opacity)
+    plt.scatter(x, y, c=z, alpha=opacity, marker=".")
     plt.colorbar(label='Exergy (J)')
     plt.title("Global Thermocline Exergy Map")
     plt.xlabel("Longitude")
@@ -40,7 +45,7 @@ def generateSurfaceTempMap(plotDf, surfaceTempPath, date):
     x = plotDf['Longitude']
     y = plotDf['Latitude']
     z = plotDf['Surface_Temp']
-    plt.scatter(x, y, c=z, alpha=opacity)
+    plt.scatter(x, y, c=z, alpha=opacity, marker=".")
     plt.colorbar(label='Surface Temp (C)')
     plt.title("Global Surface Temperature Map")
     plt.xlabel("Longitude")
@@ -61,7 +66,7 @@ def generateThermoDepthMap(plotDf, thermoDepthPath, date):
     x = plotDf['Longitude']
     y = plotDf['Latitude']
     z = plotDf['Thermocline_Depth']
-    plt.scatter(x, y, c=z, alpha=opacity)
+    plt.scatter(x, y, c=z, alpha=opacity, marker=".")
     plt.colorbar(label='Thermocline Depth (m)')
     plt.title("Global Thermocline Depth Map")
     plt.xlabel("Longitude")

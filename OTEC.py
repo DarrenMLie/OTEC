@@ -22,7 +22,7 @@ import xarray
 import torch
 
 # TODO
-# - Get better software plotting tool than geopandas or plot in MATLAB
+# - Test out different markers for best size
 # - Test world plots with smaller incr (~30 mins for 1 points for 5 deg)
 # - Validate exergy results with warsinger (order of 10^19)
 # - Validate temp results
@@ -36,8 +36,8 @@ latRange = [-90, 90]                # range of world latitudes (degrees)
 longRange = [-180, 180]             # range of world longitudes (degrees)
 dateRange = [2455562.5, 2455927.5]  # range of dates (julian time/days)
 
-areaIncr = 5        # world area grid (degrees)
-depthIncr = 5       # depth increment (meter)
+areaIncr = 1        # world area grid (degrees)
+depthIncr = 1       # depth increment (meter)
 dateIncr = 7        # date increment (days)
 tempCutoff = 2      # thermocline temperature cutoff (K or degC)
 
