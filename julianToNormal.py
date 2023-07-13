@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import math
 
 def jd_to_date(jd):

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 # OTEC Main File
 # Potential Inputs:​ Lat, Long,​ Depths​
 # Land Mask and Bathymetric Mask​
@@ -26,6 +29,8 @@ import torch
 # - Test world plots with smaller incr (~30 mins for 1 points for 5 deg)
 # - Validate exergy results with warsinger (order of 10^19)
 # - Validate temp results
+# - Depth changes each year? Might need to impose constraint on the max depth
+# - Additional plots
 # - What is depth units?
 
 # NOTE: Everything is validated except for exergy calculations, 
@@ -39,7 +44,7 @@ dateRange = [2455562.5, 2455927.5]  # range of dates (julian time/days)
 areaIncr = 1        # world area grid (degrees)
 depthIncr = 1       # depth increment (meter)
 dateIncr = 7        # date increment (days)
-tempCutoff = 2      # thermocline temperature cutoff (K or degC)
+tempCutoff = 1      # thermocline temperature cutoff (K or degC)
 
 saveThermoPlots = False
 saveExcelData = True
@@ -62,6 +67,7 @@ def main():
     exergyPath = resultsPath + "/ExergyMaps"
     surfaceTempPath = resultsPath + "/SurfaceTempMaps"
     thermoDepthPath = resultsPath + "/ThermoclineMaps"
+    oceanDepthPath = resultsPath + "/OceanDepthMaps"
     resultsCSVPath = resultsPath + "/ResultsCSV"
     if not os.path.exists(resultsPath):
         os.makedirs(resultsPath)
@@ -70,6 +76,7 @@ def main():
         os.makedirs(resultsCSVPath)
         os.makedirs(surfaceTempPath)
         os.makedirs(thermoDepthPath)
+        os.makedirs(oceanDepthPath)
         print("Directories Created Successfully")
 
     # import ML model
@@ -84,7 +91,7 @@ def main():
     for date in dateArray:
         # generate new dataframe for storing plotting variables worldwide for each new date
         print(f"Initializing plots dataframe for {date:.1f}....")
-        plotDf = pd.DataFrame(columns = ['Latitude', 'Longitude', 'Exergy', 'Surface_Temp', 'Thermocline_Depth'])
+        plotDf = pd.DataFrame(columns = ['Latitude', 'Longitude', 'Exergy', 'Surface_Temp', 'Thermocline_Depth', 'Ocean_Depth'])
     
         # generate data for each location 
         print(f"Generating data for {date:.1f}....")
@@ -108,7 +115,8 @@ def main():
                                             'Longitude' : long, 
                                             'Exergy' : totalExergy,
                                             'Surface_Temp': tempDf.loc[0, "Temperature"], 
-                                            'Thermocline_Depth': tempDf.loc[thermoDepthIndex, "Depth"]}, ignore_index = True)
+                                            'Thermocline_Depth': tempDf.loc[thermoDepthIndex, "Depth"], 
+                                            'Ocean_Depth': tempDf.iloc[-1]["Depth"]}, ignore_index = True)
 
         # save data for current time in excel sheet
         if saveExcelData:
@@ -118,7 +126,7 @@ def main():
 
         # generate plots
         print(f"Generating world plots for {date:.1f}....")             
-        generatePlots(plotDf, date, exergyPath, surfaceTempPath, thermoDepthPath)
+        generatePlots(plotDf, date, exergyPath, surfaceTempPath, thermoDepthPath, oceanDepthPath)
 
         # border
         print(f"------------------------------------------------------------------------------------------")

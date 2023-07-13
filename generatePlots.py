@@ -11,7 +11,7 @@ from julianToNormal import jd_to_date
 # - marker = "." (best option right now)
 
 plotColor = "lightgrey"
-opacity = 0.5
+opacity = 0.4
 
 def generateExergyMap(plotDf, exergyPath, date):
     worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
@@ -27,8 +27,8 @@ def generateExergyMap(plotDf, exergyPath, date):
     plt.scatter(x, y, c=z, alpha=opacity, marker=".")
     plt.colorbar(label='Exergy (J)')
     plt.title("Global Thermocline Exergy Map")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
+    plt.xlabel("Longitude ($^\circ$)")
+    plt.ylabel("Latitude ($^\circ$)")
 
     year,month,day = jd_to_date(date)
     plt.savefig(f'{exergyPath}/Exergy_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
@@ -46,10 +46,10 @@ def generateSurfaceTempMap(plotDf, surfaceTempPath, date):
     y = plotDf['Latitude']
     z = plotDf['Surface_Temp']
     plt.scatter(x, y, c=z, alpha=opacity, marker=".")
-    plt.colorbar(label='Surface Temp (C)')
+    plt.colorbar(label='Surface Temp ($^\circ$C)')
     plt.title("Global Surface Temperature Map")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
+    plt.xlabel("Longitude ($^\circ$)")
+    plt.ylabel("Latitude ($^\circ$)")
 
     year,month,day = jd_to_date(date)
     plt.savefig(f'{surfaceTempPath}/SurfaceTemp_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
@@ -69,17 +69,39 @@ def generateThermoDepthMap(plotDf, thermoDepthPath, date):
     plt.scatter(x, y, c=z, alpha=opacity, marker=".")
     plt.colorbar(label='Thermocline Depth (m)')
     plt.title("Global Thermocline Depth Map")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
+    plt.xlabel("Longitude ($^\circ$)")
+    plt.ylabel("Latitude ($^\circ$)")
 
     year,month,day = jd_to_date(date)
     plt.savefig(f'{thermoDepthPath}/ThermoDepth_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
     plt.close('all')
 
-def generatePlots(plotDf, date, exergyPath, surfaceTempPath, thermoDepthPath):
+def generateOceanDepthMap(plotDf, oceanDepthPath, date):
+    worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
+
+    # Creating axes and plotting world map
+    fig, ax = plt.subplots(figsize=(12, 6))
+    worldmap.plot(color=plotColor, ax=ax)
+
+    # Plotting our Impact Energy data with a color map
+    x = plotDf['Longitude']
+    y = plotDf['Latitude']
+    z = plotDf['Ocean_Depth']
+    plt.scatter(x, y, c=z, alpha=opacity, marker=".")
+    plt.colorbar(label='Ocean Depth (m)')
+    plt.title("Global Ocean Depth Map")
+    plt.xlabel("Longitude ($^\circ$)")
+    plt.ylabel("Latitude ($^\circ$)")
+
+    year,month,day = jd_to_date(date)
+    plt.savefig(f'{oceanDepthPath}/OceanDepth_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
+    plt.close('all')
+
+def generatePlots(plotDf, date, exergyPath, surfaceTempPath, thermoDepthPath, oceanDepthPath):
     generateExergyMap(plotDf, exergyPath, date)
     generateSurfaceTempMap(plotDf, surfaceTempPath, date)
     generateThermoDepthMap(plotDf, thermoDepthPath, date)
+    generateOceanDepthMap(plotDf, oceanDepthPath, date)
 
 def geopandasTest(plotDf):
     # # GEOPANDAS DOCS
@@ -121,7 +143,8 @@ if __name__ == "__main__":
     exergyPath = resultsPath + "/ExergyMaps"
     surfaceTempPath = resultsPath + "/SurfaceTempMaps"
     thermoDepthPath = resultsPath + "/ThermoclineMaps"
+    oceanDepthPath = resultsPath + "/OceanDepthMaps"
     resultsCSVPath = resultsPath + "/ResultsCSV"
     
-    generatePlots(plotDf, 2455562.5, exergyPath, surfaceTempPath, thermoDepthPath)
+    generatePlots(plotDf, 2455562.5, exergyPath, surfaceTempPath, thermoDepthPath, oceanDepthPath)
     # geopandasTest(plotDf)
