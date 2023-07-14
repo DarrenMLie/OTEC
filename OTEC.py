@@ -114,10 +114,10 @@ def main():
                     plotDf = plotDf._append({'Latitude' : lat, 
                                             'Longitude' : long, 
                                             'Exergy' : totalExergy,
-                                            'Surface_Temp': tempDf.loc[0, "Temperature"], 
-                                            'Thermocline_Depth': tempDf.loc[thermoDepthIndex, "Depth"], 
+                                            'Surface_Temp': tempDf['Temperature'].iloc[0], 
+                                            'Thermocline_Depth': tempDf['Temperature'].iloc[thermoDepthIndex], 
                                             'Ocean_Depth': tempDf.iloc[-1]["Depth"]}, ignore_index = True)
-
+                    # Note: tempDf.loc[0, "Depth"] would get index #0 not the 1st element
         # save data for current time in excel sheet
         if saveExcelData:
             print(f"Saving data for {date:.1f}....")

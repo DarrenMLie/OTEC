@@ -81,7 +81,10 @@ if __name__ == "__main__":
     net = Net()
     net.load_state_dict(torch.load(modelPath))
     net.eval()
-    generateThermocline(0,0,2455562.5,1000,1,net,"Results/ThermoclinePlots")
+    tempDf = generateThermocline(70,-120,2455562.5,1000,1,net,"Results/ThermoclinePlots")
+    print(tempDf)
+    print(tempDf['Temperature'].iloc[0])
+
     # generateThermocline(0,0,2455562.5+182,1000,1,net,"Results/ThermoclinePlots")
     # generateThermocline(0,0,2455562.5,1000,1,net,"Results/ThermoclinePlots")
     # generateThermocline(0,0,2455562.5+182,1000,1,net,"Results/ThermoclinePlots")

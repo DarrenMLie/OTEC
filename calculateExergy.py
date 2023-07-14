@@ -16,12 +16,14 @@ def degreeToMeters(deg):
 
 # find dead state of thermocline
 def findDeadStateIndex(tempDf, tempCutoff):
-    TLast = tempDf.min()["Temperature"]
+    TMin = tempDf.min()["Temperature"]
+    ind = len(tempDf)-1
     for i in range(len(tempDf)):
-        if tempDf.loc[i, "Temperature"] < (TLast + tempCutoff):
+        if tempDf['Temperature'].iloc[i] < (TMin + tempCutoff):
+            ind = i
             break
 
-    return i
+    return ind
 
 # calculates exergy for a chunk of water in the ocean from depth 1 to depth 2
 def calculateSingleExergy(depthIncr, TTop, TDead, areaIncrMeter):
@@ -43,9 +45,9 @@ def calculateTotalExergy(tempDf, depthIncr, areaIncr, tempCutoff):
     areaIncrMeter = degreeToMeters(areaIncr)
     deadStateIndex = findDeadStateIndex(tempDf, tempCutoff)
     for i in range(deadStateIndex): # not including dead state because dead state to itself = 0 exergy
-        TTop = tempDf.loc[i, "Temperature"]
-        TDead = tempDf.loc[deadStateIndex, "Temperature"]
-    
+        TTop = tempDf['Temperature'].iloc[i]
+        TDead = tempDf['Temperature'].iloc[deadStateIndex]
+        
         exergy = calculateSingleExergy(depthIncr, TTop, TDead, areaIncrMeter)
         totalExergy += exergy
 

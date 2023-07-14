@@ -11,7 +11,7 @@ from julianToNormal import jd_to_date
 # - marker = "." (best option right now)
 
 plotColor = "lightgrey"
-opacity = 0.4
+opacity = 0.3
 
 def generateExergyMap(plotDf, exergyPath, date):
     worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
