@@ -29,13 +29,14 @@ def findDeadStateIndex(tempDf, tempCutoff):
 def calculateSingleExergy(depthIncr, TTop, TDead, areaIncrMeter):
     P0 = 101325 # Pa
     rho = 1000     # kg/m^3
-    hTop = PropsSI('H', 'T', TTop+273.153, 'P', P0, 'Water')      #enthalpy of surface water [J/kg]
-    hDead = PropsSI('H', 'T', TDead+273.153, 'P', P0, 'Water')       #minimum possible enthalpy of the surface water [J/kg]
-    sTop = PropsSI('S', 'T', TTop+273.153, 'P', P0, 'Water')      #entropy of surface water [J/kg-K]
-    sDead = PropsSI('S', 'T', TDead+273.153, 'P', P0, 'Water')       #minimum possible entropy of the surface water [J/kg-K]
+    hTop = PropsSI('H', 'T', TTop+273.153, 'P', P0, 'Water')        #enthalpy of surface water [J/kg]
+    hDead = PropsSI('H', 'T', TDead+273.153, 'P', P0, 'Water')      #minimum possible enthalpy of the surface water [J/kg]
+    sTop = PropsSI('S', 'T', TTop+273.153, 'P', P0, 'Water')        #entropy of surface water [J/kg-K]
+    sDead = PropsSI('S', 'T', TDead+273.153, 'P', P0, 'Water')      #minimum possible entropy of the surface water [J/kg-K]
 
     specificExergy = (hTop - hDead) - (TDead+273.153)*(sTop - sDead) 
-    exergy = specificExergy * depthIncr * rho * areaIncrMeter**2
+    # exergy = specificExergy * depthIncr * rho * areaIncrMeter**2
+    exergy = specificExergy * depthIncr * rho                       # want exergy/m^2
 
     return exergy
 

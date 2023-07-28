@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # coding: utf-8
 
@@ -18,15 +17,25 @@ def generateThermocline(lat, long, date, depthLimit, depthIncr, net, folder, sav
         os.makedirs(folder)
         print("The new directory is created!")
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cpu')
     # print(torch.cuda.is_available())
     # print('how many GPUs? = ',torch.cuda.device_count())
-    data = {
-        'Latitude': [lat for i in range(0, depthLimit, depthIncr)],
-        'Longitude': [long for i in range(0, depthLimit, depthIncr)],
-        'Julian_Time': [date for i in range(0, depthLimit, depthIncr)],
-        'Depth': [i for i in range(0, depthLimit, depthIncr)]
-    }
+
+    if depthLimit == 0:
+        data = {
+            'Latitude': [lat for i in range(0, 1)],
+            'Longitude': [long for i in range(0, 1)],
+            'Julian_Time': [date for i in range(0, 1)],
+            'Depth': [i for i in range(0, 1)]
+        }
+    else: 
+        data = {
+            'Latitude': [lat for i in range(0, depthLimit, depthIncr)],
+            'Longitude': [long for i in range(0, depthLimit, depthIncr)],
+            'Julian_Time': [date for i in range(0, depthLimit, depthIncr)],
+            'Depth': [i for i in range(0, depthLimit, depthIncr)]
+        }
 
     df = pd.DataFrame(data)
 

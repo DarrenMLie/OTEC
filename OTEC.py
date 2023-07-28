@@ -25,14 +25,19 @@ import xarray
 import torch
 
 # TODO
-# - Test out different markers for best size
-# - Test world plots with smaller incr (~30 mins for 1 points for 5 deg)
-# - Validate exergy results with warsinger (order of 10^19)
-# - Validate temp results
-# - Depth changes each year? Might need to impose constraint on the max depth
-# - Additional plots
-# - What is depth units?
+# - Test out different markers for best size -> "." marker is good
+# - Test world plots with smaller incr (~30 mins for 1 points for 5 deg) v -> 1 degree looks good
+# - Validate exergy results with warsinger (order of 10^19) -> v makes sense
+# - Validate temp results v -> need more data
+# - What is depth units? v -> probably m
 
+# - parse 20 year data set and retrain model
+# - parallelize sim to speed up process
+# - inputs using day of year for seasons? use different AI model?
+# - write complete report using new plots and new data
+# - additional plots
+# - investigate if using contour plots are better than scatter plots 
+# - Depth changes each year? Might need to impose constraint on the max depth
 # NOTE: Everything is validated except for exergy calculations, 
 # depth units, and comparison with actual data
 
@@ -115,7 +120,7 @@ def main():
                                             'Longitude' : long, 
                                             'Exergy' : totalExergy,
                                             'Surface_Temp': tempDf['Temperature'].iloc[0], 
-                                            'Thermocline_Depth': tempDf['Temperature'].iloc[thermoDepthIndex], 
+                                            'Thermocline_Depth': tempDf['Depth'].iloc[thermoDepthIndex], 
                                             'Ocean_Depth': tempDf.iloc[-1]["Depth"]}, ignore_index = True)
                     # Note: tempDf.loc[0, "Depth"] would get index #0 not the 1st element
         # save data for current time in excel sheet

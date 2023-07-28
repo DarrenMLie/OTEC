@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import geopandas as gpd
@@ -25,7 +28,7 @@ def generateExergyMap(plotDf, exergyPath, date):
     y = plotDf['Latitude']
     z = plotDf['Exergy']
     plt.scatter(x, y, c=z, alpha=opacity, marker=".")
-    plt.colorbar(label='Exergy (J)')
+    plt.colorbar(label='Exergy (J/m$^2$)')
     plt.title("Global Thermocline Exergy Map")
     plt.xlabel("Longitude ($^\circ$)")
     plt.ylabel("Latitude ($^\circ$)")
