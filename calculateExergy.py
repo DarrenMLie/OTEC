@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""
+calculateExergy.py
 
+This file contains functions that calculate the total exergy for a single point in the ocean from the surface
+down to the dead state of the thermocline.
+
+@author Darren Lie
+@version August 28, 2023
+
+"""
+
+# Import Libraries
 import numpy as np
 import CoolProp as CP
 import matplotlib.pyplot as plt
@@ -35,8 +46,8 @@ def calculateSingleExergy(depthIncr, TTop, TDead, areaIncrMeter):
     sDead = PropsSI('S', 'T', TDead+273.153, 'P', P0, 'Water')      #minimum possible entropy of the surface water [J/kg-K]
 
     specificExergy = (hTop - hDead) - (TDead+273.153)*(sTop - sDead) 
-    # exergy = specificExergy * depthIncr * rho * areaIncrMeter**2
-    exergy = specificExergy * depthIncr * rho                       # want exergy/m^2
+    # exergy = specificExergy * depthIncr * rho * areaIncrMeter**2  # this is exergy (J)
+    exergy = specificExergy * depthIncr * rho                       # want exergy (J)/m^2
 
     return exergy
 

@@ -1,7 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""
+generateThermocline.py
 
-# Libraries
+This file contains a function that generates a thermocline for the given latitude and longitude using the trained
+neural network to make temperature predictions from the surface down to the maximum depth of the location.
+
+@author Darren Lie
+@version August 28, 2023
+
+"""
+
+# Import Libraries
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -22,6 +32,7 @@ def generateThermocline(lat, long, date, depthLimit, depthIncr, net, folder, sav
     # print(torch.cuda.is_available())
     # print('how many GPUs? = ',torch.cuda.device_count())
 
+    # if there is no data at the location, set everything to 0 to prevent errors
     if depthLimit == 0:
         data = {
             'Latitude': [lat for i in range(0, 1)],
@@ -71,6 +82,7 @@ def generateThermocline(lat, long, date, depthLimit, depthIncr, net, folder, sav
     tempArr = [item[0] for item in model_output_restored.tolist()]
     tempDf = pd.DataFrame(list(zip(depthArr, tempArr)), columns =["Depth", "Temperature"])
 
+    # save plots if the savePlots flag is set to True
     if savePlots:
         year,month,day=jd_to_date(date)
 

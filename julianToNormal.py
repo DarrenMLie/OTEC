@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""
+julianToNormal.py
+
+This file contains a function to convert from julian data to regular day, month, year format.
+
+@source https://gist.github.com/jiffyclub/1294443
+
+"""
 
 import math
 

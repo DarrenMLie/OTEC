@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""
+generatePlots.py
 
+This file contains functions that create world maps and plots of the various recorded metrics obtained from the 
+simulation results such as surface temperature, exergy, ocean depth, thermocline depth, etc.
+
+@author Darren Lie
+@version August 28, 2023
+
+"""
+
+# Import Libraries
 import matplotlib.pyplot as plt
 import pandas as pd
 import geopandas as gpd
@@ -13,9 +24,11 @@ from julianToNormal import jd_to_date
 # - marker = "," (too big)
 # - marker = "." (best option right now)
 
+# world map plotting settings
 plotColor = "lightgrey"
 opacity = 0.3
 
+# function that creates the global exergy map
 def generateExergyMap(plotDf, exergyPath, date):
     worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
 
@@ -37,6 +50,7 @@ def generateExergyMap(plotDf, exergyPath, date):
     plt.savefig(f'{exergyPath}/Exergy_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
     plt.close('all')
 
+# function that creates the global surface temperature map
 def generateSurfaceTempMap(plotDf, surfaceTempPath, date):
     worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
 
@@ -58,6 +72,7 @@ def generateSurfaceTempMap(plotDf, surfaceTempPath, date):
     plt.savefig(f'{surfaceTempPath}/SurfaceTemp_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
     plt.close('all')
 
+# function that creates the global thermocline depth map
 def generateThermoDepthMap(plotDf, thermoDepthPath, date):
     worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
 
@@ -79,6 +94,7 @@ def generateThermoDepthMap(plotDf, thermoDepthPath, date):
     plt.savefig(f'{thermoDepthPath}/ThermoDepth_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
     plt.close('all')
 
+# function that creates the global ocean depth map
 def generateOceanDepthMap(plotDf, oceanDepthPath, date):
     worldmap = gpd.read_file(geodatasets.get_path("naturalearth.land"))
 
@@ -100,12 +116,14 @@ def generateOceanDepthMap(plotDf, oceanDepthPath, date):
     plt.savefig(f'{oceanDepthPath}/OceanDepth_{int(month)}-{int(day)}-{str(int(year))[2:]}.png')
     plt.close('all')
 
+# function that calls all other plotting functions
 def generatePlots(plotDf, date, exergyPath, surfaceTempPath, thermoDepthPath, oceanDepthPath):
     generateExergyMap(plotDf, exergyPath, date)
     generateSurfaceTempMap(plotDf, surfaceTempPath, date)
     generateThermoDepthMap(plotDf, thermoDepthPath, date)
     generateOceanDepthMap(plotDf, oceanDepthPath, date)
 
+# function for testing plotting methods
 def geopandasTest(plotDf):
     # # GEOPANDAS DOCS
     # path = get_path("naturalearth.land")

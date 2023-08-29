@@ -1,8 +1,18 @@
 
 #!/usr/bin/env python
 # coding: utf-8
+"""
+maxDepth.py
 
-# Libraries
+This file contains a function that determines the maximum depth of a certain latitude and longitude point in the
+ocean and searches for the closest available data if the given latitude and longitude is not found in the dataset.
+
+@author Darren Lie
+@version August 28, 2023
+
+"""
+
+# Import Libraries
 import xarray
 import numpy as np
 import pandas as pd
@@ -14,6 +24,7 @@ def maxDepth(df, lat, long, areaIncr):
     longBetween = df['Longitude'].between(long - err, long + err)
     filtered_df = df.loc[latBetween & longBetween, ['Depth']]
 
+    # if there is no data at the given lat and long, check surroundings for depth data, increase by 25% error everytime
     while filtered_df.empty:
         i += 0.25
         err = areaIncr*i

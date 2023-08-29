@@ -1,7 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""
+modelValidation.py
 
-#Import some libraries
+This file is a script used to test, validate, and compare the current model predictions with the actual 3 year data
+and see whether the model results are consistent/accurate with the actual ocean data.
+
+@author Darren Lie
+@version August 28, 2023
+
+"""
+
+# Import Libraries
 import numpy as np
 import pandas as pd
 # from thermoModel import *

@@ -2,6 +2,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+"""
+Net.py
+
+This file contains the neural network architecture used to predict temperatures for the OTEC project.
+
+@author Darren Lie
+@version August 28, 2023
+
+"""
+
 class Net(nn.Module):
 
     def __init__(self):

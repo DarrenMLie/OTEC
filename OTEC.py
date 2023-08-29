@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""
+OTEC.py
 
+This file is the main script to run the OTEC project simulation to generate thermocline predictions around the globe
+and create world maps for various parameters and results.
+
+@author Darren Lie
+@version August 28, 2023
+
+"""
 # OTEC Main File
 # Potential Inputs:​ Lat, Long,​ Depths​
 # Land Mask and Bathymetric Mask​
@@ -9,7 +18,7 @@
 # Thermodynamic Model​
 # Result Plots​
 
-#Import some libraries
+# Import Libraries
 import numpy as np
 import pandas as pd
 # from thermoModel import *
@@ -51,8 +60,8 @@ depthIncr = 1       # depth increment (meter)
 dateIncr = 7        # date increment (days)
 tempCutoff = 1      # thermocline temperature cutoff (K or degC)
 
-saveThermoPlots = False
-saveExcelData = True
+saveThermoPlots = False # True = save thermocline plots (don't recommend if a lot of points are simulated)
+saveExcelData = True    # True = save world map data into excel files (recommend this to keep track of data)
 
 latArray = np.arange(latRange[0], latRange[1], areaIncr)
 longArray = np.arange(longRange[0], longRange[1], areaIncr)
